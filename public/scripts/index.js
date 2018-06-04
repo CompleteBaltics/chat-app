@@ -11,6 +11,10 @@ socket.on('connect', function() {
   socket.on('newMessage', function(message){
     console.log(message);
   });
+
+  socket.on('newUser', function(message){
+    console.log(message);
+  });
 });
 
 socket.on('disconnect', function() {

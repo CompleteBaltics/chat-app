@@ -24,11 +24,8 @@ io.on('connection', (socket) => {
     //   createdAt: new Date().getTime()
     // })
 
-    socket.broadcast.emit('newMessage', {
-      from: newMessage.from,
-      text: newMessage.text,
-      createdAt: new Date().getTime()
-    });
+    socket.broadcast.emit('newUser', 'New user joined');
+    socket.emit('newUser', 'Welcome to chat app');
   });
 
   socket.on('disconnect', () => {
