@@ -16,18 +16,14 @@ app.use(express.static(publicPath));
 io.on('connection', (socket) => {
   console.log('New user connected');
 
-  socket.on('createMessage', (newMessage) => {
+  socket.on('createMessage', (newMessage, callback) => {
     console.log(newMessage);
-
-    // io.emit('newMessage', {
-    //   from: newMessage.from,
-    //   text: newMessage.text,
-    //   createdAt: new Date().getTime()
-    // })
-
-    socket.broadcast.emit('newUser', generateMessage('Admin', 'New user joined'));
-    socket.emit('newUser', generateMessage('Admin', 'Welcome to chat app'));
+    callback('This should be from server');
+    io.emit('newMessage', generateMessage(newMessage.from, newMessage.text));
   });
+
+  socket.broadcast.emit('newUser', generateMessage('Admin', 'New user joined'));
+  socket.emit('newUser', generateMessage('Admin', 'Welcome to chat app'));
 
   socket.on('disconnect', () => {
     console.log('User was disconected');
