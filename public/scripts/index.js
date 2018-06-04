@@ -31,5 +31,5 @@ $('#chat-form').on('submit', function(e){
 
 function convertDate(data) {
     var ConvDate= new Date(data);
-    return `${ConvDate.getDate()}/${ConvDate.getMonth()}/${ConvDate.getFullYear()} ${ConvDate.getHours()}:${ConvDate.getMinutes()}:${ConvDate.getSeconds()}`;
+    return `${ConvDate.getDate()<10?'0'+ConvDate.getDate():ConvDate.getDate()}/${ConvDate.getMonth()<10?'0'+ConvDate.getMonth():ConvDate.getMonth()}/${ConvDate.getFullYear()} ${ConvDate.getHours()<10?'0'+ConvDate.getHours():ConvDate.getHours()}:${ConvDate.getMinutes()<10?'0'+ConvDate.getMinutes():ConvDate.getMinutes()}:${ConvDate.getSeconds()<10?'0'+ConvDate.getSeconds():ConvDate.getSeconds()}`;
 }
