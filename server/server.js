@@ -18,11 +18,17 @@ io.on('connection', (socket) => {
   socket.on('createMessage', (newMessage) => {
     console.log(newMessage);
 
-    io.emit('newMessage', {
+    // io.emit('newMessage', {
+    //   from: newMessage.from,
+    //   text: newMessage.text,
+    //   createdAt: new Date().getTime()
+    // })
+
+    socket.broadcast.emit('newMessage', {
       from: newMessage.from,
       text: newMessage.text,
       createdAt: new Date().getTime()
-    })
+    });
   });
 
   socket.on('disconnect', () => {
