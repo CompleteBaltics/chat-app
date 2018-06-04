@@ -9,7 +9,7 @@
   },
   "engines": {
     "node": "10.1.0"
-  }
+  },
   "author": "Caspar",
   "license": "ISC",
   "dependencies": {
