@@ -5,14 +5,14 @@ socket.on('connect', function() {
 
   socket.on('newMessage', function(message){
     let li = $('<li class="message-item"></li>');
-    li.text(`[${convertDate(message.createdAt)}] ${message.from}: ${message.text}`);
+    li.html(`[<span data-time="${message.createdAt}">${convertDate(message.createdAt)}</span>] ${message.from}: ${message.text}`);
 
     $('#messages').append(li);
   });
 
   socket.on('newLocationMessage', function(message){
     let li = $('<li class="message-item"></li>');
-    li.html(`[${convertDate(message.createdAt)}] ${message.from}: <a href="https://google.com/maps?q=${message.text}" target="_blank">User location</a>`);
+    li.html(`[<span data-time="${message.createdAt}">${convertDate(message.createdAt)}</span>] ${message.from}: <a href="https://google.com/maps?q=${message.text}" target="_blank">User location</a>`);
 
     $('#messages').append(li);
   });
@@ -22,37 +22,50 @@ socket.on('connect', function() {
   });
 });
 
+window.setInterval(function(){
+  $('.message-item span').each(function(i,e){
+    var $item = $(e);
+    var now = $item.data('time');
+    var date = convertDate(now);
+    $item.text(date);
+  });
+}, 5000);
+
 socket.on('disconnect', function() {
   console.log('disconected from server');
 });
-
+let $txt = $('#txt');
 $('#chat-form').on('submit', function(e){
   socket.emit('createMessage', {
-    from: $('#name').val(),
-    text: $('#txt').val()
+    from: 'User',
+    text: $txt.val()
   }, function(msg){
-    console.log('Got it', msg);
+    $txt.val('');
   });
   e.preventDefault();
 });
 
-$('#send-geo').click(function(){
+var $sg = $('#send-geo');
+
+$sg.click(function(){
   if (!navigator.geolocation) {
     return alert('No geo');
   }
 
+  $sg.attr('disabled', 'disabled').text('...');
   navigator.geolocation.getCurrentPosition(function(pos){
-    console.log(pos);
     socket.emit('createLocationMessage', {
       lat: pos.coords.latitude,
       lng: pos.coords.longitude
     });
+    $sg.attr('disabled', false).text('Send location');
   }, function(){
     alert('Unable to get position');
+    $sg.attr('disabled', false).text('Send location');
   });
 });
 
 function convertDate(data) {
-    var ConvDate= new Date(data);
-    return `${ConvDate.getDate()<10?'0'+ConvDate.getDate():ConvDate.getDate()}/${ConvDate.getMonth()<10?'0'+ConvDate.getMonth():ConvDate.getMonth()}/${ConvDate.getFullYear()} ${ConvDate.getHours()<10?'0'+ConvDate.getHours():ConvDate.getHours()}:${ConvDate.getMinutes()<10?'0'+ConvDate.getMinutes():ConvDate.getMinutes()}:${ConvDate.getSeconds()<10?'0'+ConvDate.getSeconds():ConvDate.getSeconds()}`;
+  var ConvDate = moment(data).fromNow();
+  return ConvDate;
 }
