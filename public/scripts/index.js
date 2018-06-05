@@ -4,17 +4,38 @@ socket.on('connect', function() {
   console.log('Connected');
 
   socket.on('newMessage', function(message){
-    let li = $('<li class="message-item"></li>');
-    li.html(`[<span data-time="${message.createdAt}">${convertDate(message.createdAt)}</span>] ${message.from}: ${message.text}`);
+    // let li = $('<li class="message-item"></li>');
+    // li.html(`[<span data-time="${message.createdAt}">${convertDate(message.createdAt)}</span>] ${message.from}: ${message.text}`);
+    //
+    // $('#messages').append(li);
+    var template = $('#message-template').html();
 
-    $('#messages').append(li);
+    var html = Mustache.render(template, {
+      text: message.text,
+      name: message.from,
+      created: message.createdAt,
+      createdFormated: convertDate(message.createdAt)
+    });
+    $('#messages').append(html);
+    autoScroll();
   });
 
   socket.on('newLocationMessage', function(message){
-    let li = $('<li class="message-item"></li>');
-    li.html(`[<span data-time="${message.createdAt}">${convertDate(message.createdAt)}</span>] ${message.from}: <a href="https://google.com/maps?q=${message.text}" target="_blank">User location</a>`);
+    // let li = $('<li class="message-item"></li>');
+    // li.html(`[<span data-time="${message.createdAt}">${convertDate(message.createdAt)}</span>] ${message.from}: <a href="https://google.com/maps?q=${message.text}" target="_blank">User location</a>`);
+    //
+    // $('#messages').append(li);
 
-    $('#messages').append(li);
+    var template = $('#location-message-template').html();
+
+    var html = Mustache.render(template, {
+      text: `https://google.com/maps?q=${message.text}`,
+      name: message.from,
+      created: message.createdAt,
+      createdFormated: convertDate(message.createdAt)
+    });
+    $('#messages').append(html);
+    autoScroll();
   });
 
   socket.on('newUser', function(message){
@@ -41,6 +62,7 @@ $('#chat-form').on('submit', function(e){
     text: $txt.val()
   }, function(msg){
     $txt.val('');
+    $txt.focus();
   });
   e.preventDefault();
 });
@@ -59,13 +81,29 @@ $sg.click(function(){
       lng: pos.coords.longitude
     });
     $sg.attr('disabled', false).text('Send location');
+    $txt.focus();
   }, function(){
     alert('Unable to get position');
     $sg.attr('disabled', false).text('Send location');
+    $txt.focus();
   });
 });
 
 function convertDate(data) {
   var ConvDate = moment(data).fromNow();
   return ConvDate;
+}
+
+function autoScroll(){
+  var $messages = $('#messages');
+  var $newMessage = $messages.children('li:last-child');
+  var newMessageHeight = $newMessage.innerHeight();
+  var lastMessageHeight = $newMessage.prev().innerHeight();
+  var height = $messages.prop('clientHeight');
+  var scrollTop = $messages.prop('scrollTop');
+  var scrollHeight = $messages.prop('scrollHeight');
+
+  if (height + scrollTop + lastMessageHeight + newMessageHeight >= scrollHeight) {
+    $messages.animate({scrollTop: scrollHeight}, 500);
+  }
 }
