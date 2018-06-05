@@ -10,6 +10,13 @@ socket.on('connect', function() {
     $('#messages').append(li);
   });
 
+  socket.on('newLocationMessage', function(message){
+    let li = $('<li class="message-item"></li>');
+    li.html(`[${convertDate(message.createdAt)}] ${message.from}: <a href="https://google.com/maps?q=${message.text}" target="_blank">User location</a>`);
+
+    $('#messages').append(li);
+  });
+
   socket.on('newUser', function(message){
     console.log(message);
   });
@@ -27,6 +34,22 @@ $('#chat-form').on('submit', function(e){
     console.log('Got it', msg);
   });
   e.preventDefault();
+});
+
+$('#send-geo').click(function(){
+  if (!navigator.geolocation) {
+    return alert('No geo');
+  }
+
+  navigator.geolocation.getCurrentPosition(function(pos){
+    console.log(pos);
+    socket.emit('createLocationMessage', {
+      lat: pos.coords.latitude,
+      lng: pos.coords.longitude
+    });
+  }, function(){
+    alert('Unable to get position');
+  });
 });
 
 function convertDate(data) {

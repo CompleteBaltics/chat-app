@@ -25,6 +25,11 @@ io.on('connection', (socket) => {
   socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined'));
   socket.emit('newMessage', generateMessage('Admin', 'Welcome to chat app'));
 
+  socket.on('createLocationMessage', (pos) => {
+    console.log(pos);
+    io.emit('newLocationMessage', generateMessage('Admin', `${pos.lat},${pos.lng}`));
+  });
+
   socket.on('disconnect', () => {
     console.log('User was disconected');
   });
