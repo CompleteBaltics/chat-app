@@ -2,56 +2,29 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="utf-8">
-    <title>Chat app</title>
-
+    <title>Join | Chat App</title>
     <link rel="stylesheet" href="/styles/styles.css">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
   </head>
-  <body class="chat">
-    <div class="chat__sidebar">
-      <h3>People</h3>
-      <div id="users"></div>
-    </div>
-
-    <div class="chat__main">
-      <ol id="messages" class="chat__messages"></ol>
-
-      <div class="chat__footer">
-        <form id="chat-form">
-          <input type="text" name="message" placeholder="Enter message" value="" id="txt" autofocus autocomplete="off">
-          <button>Send</button>
-        </form>
-        <button type="button" id="send-geo">Send location</button>
-      </div>
+  <body class="centered-form">
+    <div class="centered-form__form">
+      <form class="signup-form" action="/chat.html">
+        <div class="form-field">
+          <h3>Join chat</h3>
+        </div>
+        <div class="form-field">
+          <label>Display name</label>
+          <input type="text" name="name" autofocus>
+        </div>
+        <div class="form-field">
+          <label>Room Name</label>
+          <input type="text" name="room">
+        </div>
+        <div class="form-field">
+          <button>Join</button>
+        </div>
+      </form>
     </div>
   </body>
-
-  <script type="text/template" id="message-template">
-    <li class="message-item message">
-      <div class="message__title">
-        <h4>{{name}}</h4>
-        <span data-time="{{created}}">{{createdFormated}}</span>
-      </div>
-      <div class="message__body">{{text}}</div>
-    </li>
-  </script>
-
-  <script type="text/template" id="location-message-template">
-    <li class="message-item message">
-      <div class="message__title">
-        <h4>{{name}}</h4>
-        <span data-time="{{created}}">{{createdFormated}}</span>
-      </div>
-      <div class="message__body">
-        <p>
-          <a href="{{url}}" target="_blank">User location</a>
-        </p>
-      </div>
-    </li>
-  </script>
-
-  <script src="/socket.io/socket.io.js" charset="utf-8"></script>
-  <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-  <script src="/scripts/libs/moment.min.js"></script>
-  <script src="/scripts/libs/mustache.min.js"></script>
-  <script src="/scripts/index.js" charset="utf-8"></script>
 </html>
