@@ -1,46 +1,44 @@
 var socket = io();
 
 socket.on('connect', function() {
-  console.log('Connected');
+  socket.emit('join', $.deparam(window.location.search), function(err){
+    if (err) {
+      alert(err);
+      window.location.href = '/';
+    }else {
 
-  socket.on('newMessage', function(message){
-    // let li = $('<li class="message-item"></li>');
-    // li.html(`[<span data-time="${message.createdAt}">${convertDate(message.createdAt)}</span>] ${message.from}: ${message.text}`);
-    //
-    // $('#messages').append(li);
-    var template = $('#message-template').html();
-
-    var html = Mustache.render(template, {
-      text: message.text,
-      name: message.from,
-      created: message.createdAt,
-      createdFormated: convertDate(message.createdAt)
-    });
-    $('#messages').append(html);
-    autoScroll();
+    }
   });
+});
 
-  socket.on('newLocationMessage', function(message){
-    // let li = $('<li class="message-item"></li>');
-    // li.html(`[<span data-time="${message.createdAt}">${convertDate(message.createdAt)}</span>] ${message.from}: <a href="https://google.com/maps?q=${message.text}" target="_blank">User location</a>`);
-    //
-    // $('#messages').append(li);
+socket.on('newMessage', function(message){
+  var template = $('#message-template').html();
 
-    var template = $('#location-message-template').html();
-
-    var html = Mustache.render(template, {
-      text: `https://google.com/maps?q=${message.text}`,
-      name: message.from,
-      created: message.createdAt,
-      createdFormated: convertDate(message.createdAt)
-    });
-    $('#messages').append(html);
-    autoScroll();
+  var html = Mustache.render(template, {
+    text: message.text,
+    name: message.from,
+    created: message.createdAt,
+    createdFormated: convertDate(message.createdAt)
   });
+  $('#messages').append(html);
+  autoScroll();
+});
 
-  socket.on('newUser', function(message){
-    console.log(message);
+socket.on('newLocationMessage', function(message){
+  var template = $('#location-message-template').html();
+
+  var html = Mustache.render(template, {
+    text: `https://google.com/maps?q=${message.text}`,
+    name: message.from,
+    created: message.createdAt,
+    createdFormated: convertDate(message.createdAt)
   });
+  $('#messages').append(html);
+  autoScroll();
+});
+
+socket.on('newUser', function(message){
+  console.log(message);
 });
 
 window.setInterval(function(){
@@ -54,6 +52,16 @@ window.setInterval(function(){
 
 socket.on('disconnect', function() {
   console.log('disconected from server');
+});
+
+socket.on('updateUserList', function(users){
+  var $ol = $('<ol></ol>');
+
+  users.forEach(function(userName) {
+    $ol.append(`<li>${userName}</li>`);
+  });
+
+  $('#users').html($ol);
 });
 let $txt = $('#txt');
 $('#chat-form').on('submit', function(e){
